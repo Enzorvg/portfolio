@@ -5,6 +5,7 @@ deployment:
 
     - >
       /usr/bin/rsync -a --delete
+      --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r
       --exclude='.git/'
       --exclude='.env'
       --exclude='.env.local'
@@ -13,6 +14,13 @@ deployment:
       --exclude='public/error_log'
       --exclude='public/uploads/'
       ./ "$DEPLOYPATH"/
+
+    - chmod 711 "$DEPLOYPATH"
+    - chmod 755 "$DEPLOYPATH/public"
+    - if [ -f "$DEPLOYPATH/public/.htaccess" ]; then chmod 644 "$DEPLOYPATH/public/.htaccess"; fi
+
+    - mkdir -p "$DEPLOYPATH/var" && chmod -R 775 "$DEPLOYPATH/var" || true
+    - if [ -f "$DEPLOYPATH/.env.local" ]; then chmod 600 "$DEPLOYPATH/.env.local"; fi
 
     - cd "$DEPLOYPATH" && php /opt/cpanel/composer/bin/composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts
     - test -f "$DEPLOYPATH/vendor/autoload_runtime.php"
