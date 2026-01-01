@@ -18,3 +18,8 @@ deployment:
 
     - cd "$DEPLOYPATH" && APP_ENV=prod APP_DEBUG=0 php bin/console doctrine:migrations:migrate --no-interaction --env=prod
     - cd "$DEPLOYPATH" && APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear --env=prod
+
+    - chmod 755 "$DEPLOYPATH"
+    - chmod 755 "$DEPLOYPATH/public"
+    - if [ -f "$DEPLOYPATH/public/.htaccess" ]; then chmod 644 "$DEPLOYPATH/public/.htaccess"; fi
+    - chmod -R 775 "$DEPLOYPATH/var" || true
